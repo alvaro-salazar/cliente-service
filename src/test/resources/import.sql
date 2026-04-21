@@ -1,0 +1,1 @@
+-- archivo vacío: evita que Hibernate cargue el import.sql de producción durante los tests
