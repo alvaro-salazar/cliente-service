@@ -1,0 +1,83 @@
+### Listar todas las regiones
+GET http://localhost:8080/api/v1/cliente-service/clientes/regiones
+
+###
+
+### Listar todos los clientes
+GET http://localhost:8080/api/v1/cliente-service/clientes
+
+###
+
+### Listar clientes paginado (página 0, 4 por página)
+GET http://localhost:8080/api/v1/cliente-service/clientes/page/0
+
+###
+
+### Buscar cliente por ID
+GET http://localhost:8080/api/v1/cliente-service/clientes/1
+
+###
+
+### Buscar cliente inexistente (debe devolver 404)
+GET http://localhost:8080/api/v1/cliente-service/clientes/999
+
+###
+
+### Crear un cliente (datos válidos)
+POST http://localhost:8080/api/v1/cliente-service/clientes
+Content-Type: application/json
+
+{
+  "nombre": "Edsger",
+  "apellido": "Dijkstra",
+  "email": "edsger@cs.nl",
+  "foto": "dijkstra.jpg",
+  "region": { "id": 4 }
+}
+
+###
+
+### Crear cliente con datos inválidos (debe devolver 400)
+POST http://localhost:8080/api/v1/cliente-service/clientes
+Content-Type: application/json
+
+{
+  "nombre": "",
+  "apellido": "",
+  "email": "no-es-un-email",
+  "region": null
+}
+
+###
+
+### Actualizar un cliente
+PUT http://localhost:8080/api/v1/cliente-service/clientes/1
+Content-Type: application/json
+
+{
+  "nombre": "Linus",
+  "apellido": "Torvalds",
+  "email": "linus@kernel.org",
+  "foto": "linus-updated.jpg",
+  "region": { "id": 4 }
+}
+
+###
+
+### Eliminar un cliente
+DELETE http://localhost:8080/api/v1/cliente-service/clientes/1
+
+###
+
+### Actuator — health
+GET http://localhost:8081/actuator/health
+
+###
+
+### Actuator — info
+GET http://localhost:8081/actuator/info
+
+###
+
+### Actuator — métricas disponibles
+GET http://localhost:8081/actuator/metrics

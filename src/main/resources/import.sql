@@ -1,0 +1,21 @@
+INSERT INTO regiones (nombre) VALUES ('Suramerica');
+INSERT INTO regiones (nombre) VALUES ('Centroamerica');
+INSERT INTO regiones (nombre) VALUES ('Norteamerica');
+INSERT INTO regiones (nombre) VALUES ('Europa');
+INSERT INTO regiones (nombre) VALUES ('Asia');
+INSERT INTO regiones (nombre) VALUES ('Africa');
+INSERT INTO regiones (nombre) VALUES ('Oceania');
+INSERT INTO regiones (nombre) VALUES ('Antartida');
+
+INSERT INTO clientes (nombre, apellido, email, foto, create_at, region_id) VALUES ('Linus', 'Torvalds', 'linus@linux.org', 'linus.jpg', NOW(), 4);
+INSERT INTO clientes (nombre, apellido, email, foto, create_at, region_id) VALUES ('James', 'Gosling', 'james@java.com', 'james.jpg', NOW(), 3);
+INSERT INTO clientes (nombre, apellido, email, foto, create_at, region_id) VALUES ('Dennis', 'Ritchie', 'dennis@bell.com', 'dennis.jpg', NOW(), 3);
+INSERT INTO clientes (nombre, apellido, email, foto, create_at, region_id) VALUES ('Grace', 'Hopper', 'grace@navy.mil', 'grace.jpg', NOW(), 3);
+INSERT INTO clientes (nombre, apellido, email, foto, create_at, region_id) VALUES ('Ada', 'Lovelace', 'ada@babbage.io', 'ada.jpg', NOW(), 4);
+INSERT INTO clientes (nombre, apellido, email, foto, create_at, region_id) VALUES ('Alan', 'Turing', 'alan@bletchley.uk', 'alan.jpg', NOW(), 4);
+INSERT INTO clientes (nombre, apellido, email, foto, create_at, region_id) VALUES ('Margaret', 'Hamilton', 'margaret@nasa.gov', 'margaret.jpg', NOW(), 3);
+INSERT INTO clientes (nombre, apellido, email, foto, create_at, region_id) VALUES ('Tim', 'Berners-Lee', 'tim@w3.org', 'tim.jpg', NOW(), 4);
+INSERT INTO clientes (nombre, apellido, email, foto, create_at, region_id) VALUES ('Guido', 'van Rossum', 'guido@python.org', 'guido.jpg', NOW(), 4);
+INSERT INTO clientes (nombre, apellido, email, foto, create_at, region_id) VALUES ('Ken', 'Thompson', 'ken@bell.com', 'ken.jpg', NOW(), 3);
+INSERT INTO clientes (nombre, apellido, email, foto, create_at, region_id) VALUES ('Bjarne', 'Stroustrup', 'bjarne@cpp.org', 'bjarne.jpg', NOW(), 4);
+INSERT INTO clientes (nombre, apellido, email, foto, create_at, region_id) VALUES ('Brian', 'Kernighan', 'brian@bell.com', 'brian.jpg', NOW(), 3);
