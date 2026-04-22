@@ -7,6 +7,7 @@ import com.denkitronik.clienteservice.entities.Region;
 import com.denkitronik.clienteservice.services.IClienteService;
 import com.denkitronik.clienteservice.services.IUploadFileService;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.core.io.Resource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
@@ -45,17 +46,20 @@ public class ClienteRestController {
 	}
 
 	@GetMapping("/clientes")
+	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	public List<Cliente> index() {
 		return clienteService.findAll();
 	}
 
 	@GetMapping("/clientes/page/{page}")
+	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	public Page<Cliente> index(@PathVariable Integer page) {
 		Pageable pageable = PageRequest.of(page, 4);
 		return clienteService.findAll(pageable);
 	}
 
 	@GetMapping("/clientes/{id}")
+	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	public ResponseEntity<?> show(@PathVariable Long id) {
 
 		Cliente cliente = null;
@@ -78,6 +82,7 @@ public class ClienteRestController {
 	}
 
 	@PostMapping("/clientes")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<?> create(@Valid @RequestBody Cliente cliente, BindingResult result) {
 
 		Cliente clienteNew = null;
@@ -108,6 +113,7 @@ public class ClienteRestController {
 	}
 
 	@PutMapping("/clientes/{id}")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<?> update(@Valid @RequestBody Cliente cliente, BindingResult result, @PathVariable Long id) {
 
 		Cliente clienteActual = clienteService.findById(id);
@@ -155,6 +161,7 @@ public class ClienteRestController {
 	}
 
 	@DeleteMapping("/clientes/{id}")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<?> delete(@PathVariable Long id) {
 
 		Map<String, Object> response = new HashMap<>();
@@ -227,6 +234,7 @@ public class ClienteRestController {
 	}
 
 	@GetMapping("/clientes/regiones")
+	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	public List<Region> listarRegiones(){
 		return clienteService.findAllRegiones();
 	}

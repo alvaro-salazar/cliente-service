@@ -1,5 +1,5 @@
 # Usar una imagen base de OpenJDK
-FROM openjdk:21-jdk-slim
+FROM eclipse-temurin:21-jre-alpine
 LABEL authors="alvaro-salazar"
 # Establecer el directorio de trabajo dentro del contenedor
 WORKDIR /app
