@@ -1,0 +1,65 @@
+{
+  "realm": "curso-springboot",
+  "enabled": true,
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "clients": [
+    {
+      "clientId": "cliente-service",
+      "name": "cliente-service",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "protocol": "openid-connect"
+    }
+  ],
+  "roles": {
+    "realm": [
+      {
+        "name": "ADMIN",
+        "description": "Administrador: puede crear, editar y eliminar clientes"
+      },
+      {
+        "name": "USER",
+        "description": "Usuario: solo puede consultar clientes"
+      }
+    ]
+  },
+  "users": [
+    {
+      "username": "alice",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Alice",
+      "lastName": "Springs",
+      "email": "alice@example.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "alice123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["USER"]
+    },
+    {
+      "username": "admin_user",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Admin",
+      "lastName": "User",
+      "email": "admin@example.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["ADMIN"]
+    }
+  ]
+}

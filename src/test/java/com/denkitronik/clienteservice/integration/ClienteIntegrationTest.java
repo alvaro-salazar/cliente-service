@@ -5,17 +5,24 @@ import com.denkitronik.clienteservice.domain.entities.Region;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.http.*;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
@@ -34,13 +41,35 @@ class ClienteIntegrationTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    // JwtDecoder mockeado para que el contexto no contacte a Keycloak
+    @MockBean
+    private JwtDecoder jwtDecoder;
+
     private static final String BASE = "/api/v1/cliente-service";
     private static final AtomicBoolean seeded = new AtomicBoolean(false);
     private static Long regionId;
     private static Long idCreado;
 
     @BeforeEach
-    void seedOnce() {
+    void setUp() {
+        // Configurar JwtDecoder mock para devolver un JWT con roles ADMIN y USER
+        Jwt jwt = Jwt.withTokenValue("test-token")
+                .header("alg", "RS256")
+                .claim("sub", "admin_user")
+                .claim("preferred_username", "admin_user")
+                .claim("realm_access", Map.of("roles", List.of("ADMIN", "USER")))
+                .build();
+        when(jwtDecoder.decode(anyString())).thenReturn(jwt);
+
+        // Añadir cabecera Authorization a todas las peticiones de TestRestTemplate
+        restTemplate.getRestTemplate().setInterceptors(List.of(
+                (request, body, execution) -> {
+                    request.getHeaders().add("Authorization", "Bearer test-token");
+                    return execution.execute(request, body);
+                }
+        ));
+
+        // Sembrar datos una sola vez
         if (seeded.compareAndSet(false, true)) {
             jdbcTemplate.execute("INSERT INTO regiones(nombre) VALUES ('América del Sur')");
             regionId = jdbcTemplate.queryForObject(
