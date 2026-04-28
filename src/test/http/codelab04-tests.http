@@ -1,0 +1,91 @@
+### ── Codelab 04 — Arquitectura limpia y excepciones ─────────────────
+
+### 1. GET cliente existente -> 200 OK con body
+GET http://localhost:8080/api/v1/cliente-service/clientes/1
+Accept: application/json
+
+###
+
+### 2. GET cliente inexistente -> 404 con ApiErrorResponse JSON
+GET http://localhost:8080/api/v1/cliente-service/clientes/999
+Accept: application/json
+
+###
+
+### 3. PUT cliente existente -> 201 Created
+PUT http://localhost:8080/api/v1/cliente-service/clientes/1
+Content-Type: application/json
+
+{
+  "nombre": "Linus",
+  "apellido": "Benedict Torvalds",
+  "email": "linus@kernel.org",
+  "foto": "linus-updated.jpg",
+  "region": { "id": 4 }
+}
+
+###
+
+### 4. PUT cliente inexistente -> 404 con ApiErrorResponse JSON
+PUT http://localhost:8080/api/v1/cliente-service/clientes/999
+Content-Type: application/json
+
+{
+  "nombre": "Fantasma",
+  "apellido": "Digital",
+  "email": "fantasma@no.com",
+  "region": { "id": 1 }
+}
+
+###
+
+### 5. DELETE cliente existente -> 204 No Content
+DELETE http://localhost:8080/api/v1/cliente-service/clientes/12
+Accept: application/json
+
+###
+
+### 6. DELETE cliente inexistente -> 404 con ApiErrorResponse JSON
+DELETE http://localhost:8080/api/v1/cliente-service/clientes/999
+Accept: application/json
+
+###
+
+### 7. POST inválido -> 400 con mapa de errores por campo
+POST http://localhost:8080/api/v1/cliente-service/clientes
+Content-Type: application/json
+
+{
+  "nombre": "",
+  "apellido": "",
+  "email": "no-email",
+  "region": null
+}
+
+###
+
+### 8. POST válido -> 201 Created
+POST http://localhost:8080/api/v1/cliente-service/clientes
+Content-Type: application/json
+
+{
+  "nombre": "Donald",
+  "apellido": "Knuth",
+  "email": "knuth@stanford.edu",
+  "foto": "knuth.jpg",
+  "region": { "id": 3 }
+}
+
+###
+
+### 9. Listar paginado -> página 0, 4 elementos
+GET http://localhost:8080/api/v1/cliente-service/clientes/page/0
+Accept: application/json
+
+###
+
+### 10. Health check con estado de la BD
+GET http://localhost:8081/actuator/health
+Accept: application/json
+
+###
