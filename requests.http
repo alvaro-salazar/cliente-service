@@ -1,0 +1,70 @@
+### Listar todas las regiones
+GET http://localhost:8080/api/v1/cliente-service/clientes/regiones
+
+###
+
+### Listar todos los clientes
+GET http://localhost:8080/api/v1/cliente-service/clientes
+
+###
+
+### Crear un cliente
+POST http://localhost:8080/api/v1/cliente-service/clientes
+Content-Type: application/json
+
+{
+  "nombre": "Linus",
+  "apellido": "Torvalds",
+  "email": "linus@linux.org",
+  "foto": "linus.jpg",
+  "region": { "id": 1 }
+}
+
+###
+
+### Crear otro cliente
+POST http://localhost:8080/api/v1/cliente-service/clientes
+Content-Type: application/json
+
+{
+  "nombre": "James",
+  "apellido": "Gosling",
+  "email": "james@java.com",
+  "foto": "james.jpg",
+  "region": { "id": 3 }
+}
+
+###
+
+### Buscar por ID
+GET http://localhost:8080/api/v1/cliente-service/clientes/1
+
+###
+
+### Actualizar un cliente (ID va en el body)
+PUT http://localhost:8080/api/v1/cliente-service/clientes
+Content-Type: application/json
+
+{
+  "id": 1,
+  "nombre": "Linus",
+  "apellido": "Torvalds",
+  "email": "linus@kernel.org",
+  "foto": "linus-updated.jpg",
+  "region": { "id": 1 }
+}
+
+###
+
+### Eliminar un cliente (objeto va en el body)
+DELETE http://localhost:8080/api/v1/cliente-service/clientes
+Content-Type: application/json
+
+{
+  "id": 1
+}
+
+###
+
+### Verificar que ya no existe (debe retornar 404)
+GET http://localhost:8080/api/v1/cliente-service/clientes/1
