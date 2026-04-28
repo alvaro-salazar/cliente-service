@@ -3,74 +3,133 @@ package com.denkitronik.clienteservice.controllers;
 import com.denkitronik.clienteservice.entities.Cliente;
 import com.denkitronik.clienteservice.entities.Region;
 import com.denkitronik.clienteservice.services.IClienteService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-// @RestController = @Controller + @ResponseBody
-// @Controller     -> registra esta clase como un controlador Spring MVC
-// @ResponseBody   -> serializa automáticamente el retorno a JSON
 @RestController
-
-// Todos los endpoints de esta clase empiezan con esta URL base
-// ${api.version} toma el valor de api.version en application.properties
 @RequestMapping("/api/${api.version}/cliente-service")
-
-// Permite peticiones desde el frontend Angular en puerto 4200
 @CrossOrigin(origins = {"http://localhost:4200"})
 public class ClienteRestController {
 
     @Autowired
     private IClienteService clienteService;
 
-    // ── GET /clientes ────────────────────────────────────────────────────────
+    // GET /clientes — lista sin paginar (compatible con el frontend)
     @GetMapping("/clientes")
     public ResponseEntity<List<Cliente>> listarClientes() {
-        List<Cliente> clientes = clienteService.findAll();
+        return ResponseEntity.ok(clienteService.findAll());
+    }
+
+    // GET /clientes/page/{page} — lista paginada, 4 elementos por página
+    @GetMapping("/clientes/page/{page}")
+    public ResponseEntity<Page<Cliente>> listarClientesPaginado(@PathVariable Integer page) {
+        Page<Cliente> clientes = clienteService.findAll(PageRequest.of(page, 4));
         return ResponseEntity.ok(clientes);
     }
 
-    // ── GET /clientes/{id} ───────────────────────────────────────────────────
+    // GET /clientes/{id}
     @GetMapping("/clientes/{id}")
     public ResponseEntity<?> buscarCliente(@PathVariable Long id) {
         Optional<Cliente> cliente = clienteService.findById(id);
-        if (cliente.isPresent()) {
-            return ResponseEntity.ok(cliente.get());
+        if (!cliente.isPresent()) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("mensaje", "El cliente ID: ".concat(id.toString())
+                      .concat(" no existe en la base de datos"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(cliente.get());
     }
 
-    // ── POST /clientes ───────────────────────────────────────────────────────
+    // POST /clientes
     @PostMapping("/clientes")
-    public ResponseEntity<Cliente> crearCliente(@RequestBody Cliente cliente) {
-        Cliente nuevo = clienteService.save(cliente);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
+    public ResponseEntity<?> crearCliente(@Valid @RequestBody Cliente cliente,
+                                          BindingResult result) {
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(construirErrores(result));
+        }
+        try {
+            Cliente nuevo = clienteService.save(cliente);
+            return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
+        } catch (DataAccessException e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("mensaje", "Error al guardar el cliente en la base de datos");
+            error.put("error", e.getMostSpecificCause().getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
     }
 
-    // ── PUT /clientes ────────────────────────────────────────────────────────
-    // El ID del cliente a actualizar viene dentro del body JSON
-    @PutMapping("/clientes")
-    public ResponseEntity<Cliente> actualizarCliente(@RequestBody Cliente cliente) {
-        Cliente actualizado = clienteService.update(cliente);
-        return ResponseEntity.ok(actualizado);
+    // PUT /clientes/{id}
+    @PutMapping("/clientes/{id}")
+    public ResponseEntity<?> actualizarCliente(@Valid @RequestBody Cliente cliente,
+                                               BindingResult result,
+                                               @PathVariable Long id) {
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(construirErrores(result));
+        }
+        Optional<Cliente> existente = clienteService.findById(id);
+        if (!existente.isPresent()) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("mensaje", "El cliente ID: ".concat(id.toString())
+                      .concat(" no existe en la base de datos"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        }
+        try {
+            Cliente actual = existente.get();
+            actual.setNombre(cliente.getNombre());
+            actual.setApellido(cliente.getApellido());
+            actual.setEmail(cliente.getEmail());
+            actual.setRegion(cliente.getRegion());
+            actual.setFoto(cliente.getFoto());
+            return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.save(actual));
+        } catch (DataAccessException e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("mensaje", "Error al actualizar el cliente en la base de datos");
+            error.put("error", e.getMostSpecificCause().getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
     }
 
-    // ── DELETE /clientes ─────────────────────────────────────────────────────
-    // El cliente a eliminar viene en el body JSON
-    @DeleteMapping("/clientes")
-    public ResponseEntity<Void> eliminarCliente(@RequestBody Cliente cliente) {
-        clienteService.delete(cliente);
-        return ResponseEntity.noContent().build();
+    // DELETE /clientes/{id}
+    @DeleteMapping("/clientes/{id}")
+    public ResponseEntity<?> eliminarCliente(@PathVariable Long id) {
+        try {
+            clienteService.delete(id);
+            return ResponseEntity.noContent().build();
+        } catch (DataAccessException e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("mensaje", "Error al eliminar el cliente en la base de datos");
+            error.put("error", e.getMostSpecificCause().getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
     }
 
-    // ── GET /clientes/regiones ───────────────────────────────────────────────
+    // GET /clientes/regiones
     @GetMapping("/clientes/regiones")
     public ResponseEntity<List<Region>> listarRegiones() {
-        List<Region> regiones = clienteService.findAllRegiones();
-        return ResponseEntity.ok(regiones);
+        return ResponseEntity.ok(clienteService.findAllRegiones());
+    }
+
+    // ── Método auxiliar ───────────────────────────────────────────────────────
+    private Map<String, Object> construirErrores(BindingResult result) {
+        Map<String, Object> errores = new HashMap<>();
+        List<String> listaErrores = result.getFieldErrors()
+            .stream()
+            .map(fe -> "El campo '" + fe.getField() + "' " + fe.getDefaultMessage())
+            .collect(Collectors.toList());
+        errores.put("errors", listaErrores);
+        return errores;
     }
 }
