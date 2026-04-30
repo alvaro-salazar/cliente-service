@@ -1,8 +1,3 @@
--- Datos de prueba para ClienteService
--- Se ejecuta automáticamente al arrancar con ddl-auto=create-drop
--- IMPORTANTE: cada sentencia debe estar en una sola línea (Hibernate 6 ejecuta línea por línea)
-
--- Regiones
 INSERT INTO regiones (nombre) VALUES ('Suramerica');
 INSERT INTO regiones (nombre) VALUES ('Centroamerica');
 INSERT INTO regiones (nombre) VALUES ('Norteamerica');
@@ -11,8 +6,6 @@ INSERT INTO regiones (nombre) VALUES ('Asia');
 INSERT INTO regiones (nombre) VALUES ('Africa');
 INSERT INTO regiones (nombre) VALUES ('Oceania');
 INSERT INTO regiones (nombre) VALUES ('Antartida');
-
--- Clientes (pioneros de la informática)
 INSERT INTO clientes (nombre, apellido, email, foto, region_id) VALUES ('Linus', 'Torvalds', 'linus@linux.org', 'linus.jpg', 4);
 INSERT INTO clientes (nombre, apellido, email, foto, region_id) VALUES ('James', 'Gosling', 'james@java.com', 'james.jpg', 3);
 INSERT INTO clientes (nombre, apellido, email, foto, region_id) VALUES ('Dennis', 'Ritchie', 'dennis@bell.com', 'dennis.jpg', 3);
