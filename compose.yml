@@ -50,6 +50,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       JPA_DDL: ${JPA_DDL}
       KEYCLOAK_ISSUER_URI: ${KEYCLOAK_ISSUER_URI}
+      KEYCLOAK_JWK_SET_URI: ${KEYCLOAK_JWK_SET_URI}
     depends_on:
       postgres:
         condition: service_healthy
