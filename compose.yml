@@ -18,6 +18,26 @@ services:
       timeout: 5s
       retries: 10
 
+  # ── Keycloak — servidor de identidad y autorización ───────────────────────
+  keycloak:
+    image: keycloak/keycloak:26.0
+    container_name: curso_springboot_keycloak
+    command: start-dev --import-realm
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HTTP_PORT: 8090
+    ports:
+      - "8090:8090"
+    volumes:
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8090/realms/curso-springboot || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+
   # ── Aplicación Spring Boot ────────────────────────────────────────────────
   app:
     build: .
@@ -29,8 +49,11 @@ services:
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
       JPA_DDL: ${JPA_DDL}
+      KEYCLOAK_ISSUER_URI: ${KEYCLOAK_ISSUER_URI}
     depends_on:
       postgres:
+        condition: service_healthy
+      keycloak:
         condition: service_healthy
 
 volumes:
