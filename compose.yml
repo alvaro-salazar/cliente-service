@@ -6,14 +6,14 @@ services:
     container_name: curso_springboot_db
     environment:
       POSTGRES_DB: curso_springboot
-      POSTGRES_USER: devdb
-      POSTGRES_PASSWORD: a1b2c3d4
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
       - "5433:5432"   # 5433 en tu máquina → 5432 dentro del contenedor
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U devdb -d curso_springboot"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d curso_springboot"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -25,10 +25,10 @@ services:
       - "8080:8080"   # API REST
       - "8081:8081"   # Actuator
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/curso_springboot
-      SPRING_DATASOURCE_USERNAME: devdb
-      SPRING_DATASOURCE_PASSWORD: a1b2c3d4
-      SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JPA_DDL: ${JPA_DDL}
     depends_on:
       postgres:
         condition: service_healthy
