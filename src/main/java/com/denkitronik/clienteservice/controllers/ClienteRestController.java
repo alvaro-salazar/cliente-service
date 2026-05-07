@@ -51,11 +51,14 @@ public class ClienteRestController {
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
     }
 
-    // ── PUT /clientes ────────────────────────────────────────────────────────
-    // El ID del cliente a actualizar viene dentro del body JSON
-    @PutMapping("/clientes")
-    public ResponseEntity<Cliente> actualizarCliente(@RequestBody Cliente cliente) {
-        Cliente actualizado = clienteService.update(cliente);
+    // ── PUT /clientes/{id} ───────────────────────────────────────────────────
+    @PutMapping("/clientes/{id}")
+    public ResponseEntity<Cliente> actualizarCliente(
+            @PathVariable Long id, @RequestBody Cliente cliente) {
+        if (clienteService.findById(id).isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Cliente actualizado = clienteService.update(id, cliente);
         return ResponseEntity.ok(actualizado);
     }
 
