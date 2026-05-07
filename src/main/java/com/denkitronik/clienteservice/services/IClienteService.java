@@ -25,9 +25,14 @@ public interface IClienteService {
     Optional<Cliente> findById(Long id);
 
     /**
-     * Crea o actualiza un cliente.
+     * Persiste un nuevo cliente.
      */
     Cliente save(Cliente cliente);
+
+    /**
+     * Actualiza los campos de un cliente existente preservando createAt.
+     */
+    Cliente update(Long id, Cliente cliente);
 
     /**
      * Elimina un cliente por su ID.

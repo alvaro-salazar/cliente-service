@@ -79,21 +79,14 @@ public class ClienteRestController {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(construirErrores(result));
         }
-        Optional<Cliente> existente = clienteService.findById(id);
-        if (!existente.isPresent()) {
+        if (!clienteService.findById(id).isPresent()) {
             Map<String, Object> error = new HashMap<>();
             error.put("mensaje", "El cliente ID: ".concat(id.toString())
                       .concat(" no existe en la base de datos"));
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
         }
         try {
-            Cliente actual = existente.get();
-            actual.setNombre(cliente.getNombre());
-            actual.setApellido(cliente.getApellido());
-            actual.setEmail(cliente.getEmail());
-            actual.setRegion(cliente.getRegion());
-            actual.setFoto(cliente.getFoto());
-            return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.save(actual));
+            return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.update(id, cliente));
         } catch (DataAccessException e) {
             Map<String, Object> error = new HashMap<>();
             error.put("mensaje", "Error al actualizar el cliente en la base de datos");

@@ -43,6 +43,18 @@ public class ClienteServiceImpl implements IClienteService {
 
     @Override
     @Transactional
+    public Cliente update(Long id, Cliente cliente) {
+        Cliente actual = clienteDao.findById(id).orElseThrow();
+        actual.setNombre(cliente.getNombre());
+        actual.setApellido(cliente.getApellido());
+        actual.setEmail(cliente.getEmail());
+        actual.setFoto(cliente.getFoto());
+        actual.setRegion(cliente.getRegion());
+        return clienteDao.save(actual);
+    }
+
+    @Override
+    @Transactional
     public void delete(Long id) {
         clienteDao.deleteById(id);
     }
