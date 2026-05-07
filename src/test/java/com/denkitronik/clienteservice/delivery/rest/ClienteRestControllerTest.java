@@ -118,8 +118,8 @@ class ClienteRestControllerTest {
                         .content(objectMapper.writeValueAsString(cliente)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors").isArray())
-                .andExpect(jsonPath("$.errors[0]").value(
-                        org.hamcrest.Matchers.containsString("nombre")));
+                .andExpect(jsonPath("$.errors", org.hamcrest.Matchers.hasItem(
+                        org.hamcrest.Matchers.containsString("nombre"))));
     }
 
     @Test
