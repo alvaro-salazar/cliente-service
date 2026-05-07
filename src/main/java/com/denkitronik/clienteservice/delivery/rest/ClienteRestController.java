@@ -58,14 +58,8 @@ public class ClienteRestController {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(construirErrores(result));
         }
-        // findById lanza ClienteNotFoundException si no existe -> 404 automático
-        Cliente actual = clienteService.findById(id);
-        actual.setNombre(cliente.getNombre());
-        actual.setApellido(cliente.getApellido());
-        actual.setEmail(cliente.getEmail());
-        actual.setRegion(cliente.getRegion());
-        actual.setFoto(cliente.getFoto());
-        return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.save(actual));
+        // update lanza ClienteNotFoundException si no existe -> 404 automático
+        return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.update(id, cliente));
     }
 
     @DeleteMapping("/clientes/{id}")

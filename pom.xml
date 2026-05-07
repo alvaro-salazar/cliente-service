@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.5</version>
+        <version>3.4.5</version>
         <relativePath/>
     </parent>
     <groupId>com.denkitronik</groupId>
@@ -107,6 +107,18 @@
                     <!-- Testcontainers tarda en liberar recursos al apagar;
                          60 s evita que Surefire mate el fork prematuramente -->
                     <forkedProcessExitTimeoutInSeconds>60</forkedProcessExitTimeoutInSeconds>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <plugin>

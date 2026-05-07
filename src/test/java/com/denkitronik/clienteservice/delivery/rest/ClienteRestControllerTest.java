@@ -1,6 +1,6 @@
 package com.denkitronik.clienteservice.delivery.rest;
 
-import com.denkitronik.clienteservice.delivery.exception.ClienteNotFoundException;
+import com.denkitronik.clienteservice.domain.exception.ClienteNotFoundException;
 import com.denkitronik.clienteservice.domain.entities.Cliente;
 import com.denkitronik.clienteservice.domain.entities.Region;
 import com.denkitronik.clienteservice.domain.services.IClienteService;
@@ -10,7 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
@@ -30,7 +30,7 @@ class ClienteRestControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean                            // reemplaza IClienteService en el contexto de Spring
+    @MockitoBean                         // reemplaza IClienteService en el contexto de Spring
     private IClienteService clienteService;
 
     @Autowired
@@ -118,8 +118,8 @@ class ClienteRestControllerTest {
                         .content(objectMapper.writeValueAsString(cliente)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors").isArray())
-                .andExpect(jsonPath("$.errors[0]").value(
-                        org.hamcrest.Matchers.containsString("nombre")));
+                .andExpect(jsonPath("$.errors", org.hamcrest.Matchers.hasItem(
+                        org.hamcrest.Matchers.containsString("nombre"))));
     }
 
     @Test
@@ -136,8 +136,7 @@ class ClienteRestControllerTest {
     @Test
     @DisplayName("PUT /clientes/1 válido → 201 Created")
     void actualizarCliente_valido_debeRetornar201() throws Exception {
-        when(clienteService.findById(1L)).thenReturn(cliente);
-        when(clienteService.save(any(Cliente.class))).thenReturn(cliente);
+        when(clienteService.update(eq(1L), any(Cliente.class))).thenReturn(cliente);
 
         mockMvc.perform(put(BASE + "/clientes/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -148,7 +147,7 @@ class ClienteRestControllerTest {
     @Test
     @DisplayName("PUT /clientes/999 → 404 cuando el cliente no existe")
     void actualizarCliente_idInexistente_debeRetornar404() throws Exception {
-        when(clienteService.findById(999L))
+        when(clienteService.update(eq(999L), any(Cliente.class)))
                 .thenThrow(new ClienteNotFoundException(999L));
 
         mockMvc.perform(put(BASE + "/clientes/999")

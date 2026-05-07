@@ -20,21 +20,28 @@ public interface IClienteService {
 
     /**
      * Busca un cliente por ID.
-     * @throws com.denkitronik.clienteservice.delivery.exception.ClienteNotFoundException
+     * @throws com.denkitronik.clienteservice.domain.exception.ClienteNotFoundException
      *         si no existe un cliente con ese ID
      */
     Cliente findById(Long id);
 
     /**
-     * Crea o actualiza un cliente.
-     * @throws com.denkitronik.clienteservice.delivery.exception.ClienteServiceException
+     * Persiste un nuevo cliente.
+     * @throws com.denkitronik.clienteservice.domain.exception.ClienteServiceException
      *         si ocurre un error de base de datos
      */
     Cliente save(Cliente cliente);
 
     /**
+     * Actualiza los campos de un cliente existente preservando createAt.
+     * @throws com.denkitronik.clienteservice.domain.exception.ClienteNotFoundException
+     *         si no existe un cliente con ese ID
+     */
+    Cliente update(Long id, Cliente cliente);
+
+    /**
      * Elimina un cliente por ID.
-     * @throws com.denkitronik.clienteservice.delivery.exception.ClienteNotFoundException
+     * @throws com.denkitronik.clienteservice.domain.exception.ClienteNotFoundException
      *         si no existe un cliente con ese ID
      */
     void delete(Long id);

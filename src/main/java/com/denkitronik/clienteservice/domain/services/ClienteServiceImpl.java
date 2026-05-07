@@ -1,7 +1,7 @@
 package com.denkitronik.clienteservice.domain.services;
 
-import com.denkitronik.clienteservice.delivery.exception.ClienteNotFoundException;
-import com.denkitronik.clienteservice.delivery.exception.ClienteServiceException;
+import com.denkitronik.clienteservice.domain.exception.ClienteNotFoundException;
+import com.denkitronik.clienteservice.domain.exception.ClienteServiceException;
 import com.denkitronik.clienteservice.domain.entities.Cliente;
 import com.denkitronik.clienteservice.domain.entities.Region;
 import com.denkitronik.clienteservice.domain.repositories.IClienteDao;
@@ -49,6 +49,19 @@ public class ClienteServiceImpl implements IClienteService {
                 ex
             );
         }
+    }
+
+    @Override
+    @Transactional
+    public Cliente update(Long id, Cliente cliente) {
+        Cliente actual = clienteDao.findById(id)
+                .orElseThrow(() -> new ClienteNotFoundException(id));
+        actual.setNombre(cliente.getNombre());
+        actual.setApellido(cliente.getApellido());
+        actual.setEmail(cliente.getEmail());
+        actual.setFoto(cliente.getFoto());
+        actual.setRegion(cliente.getRegion());
+        return clienteDao.save(actual);
     }
 
     @Override

@@ -105,10 +105,10 @@ class IClienteDaoTest {
         Long id = cliente.getId();
 
         clienteDao.deleteById(id);
-        em.flush();
+        em.flush();   // fuerza el DELETE en la base de datos
+        em.clear();   // limpia la caché de primer nivel de Hibernate
 
-        // Verificamos directamente en el contexto de persistencia
-        // (más confiable que llamar findById nuevamente)
+        // em.find busca directamente en la BD, no en la caché
         assertThat(em.find(Cliente.class, id)).isNull();
     }
 }

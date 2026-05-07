@@ -1,7 +1,7 @@
 package com.denkitronik.clienteservice.domain.services;
 
-import com.denkitronik.clienteservice.delivery.exception.ClienteNotFoundException;
-import com.denkitronik.clienteservice.delivery.exception.ClienteServiceException;
+import com.denkitronik.clienteservice.domain.exception.ClienteNotFoundException;
+import com.denkitronik.clienteservice.domain.exception.ClienteServiceException;
 import com.denkitronik.clienteservice.domain.entities.Cliente;
 import com.denkitronik.clienteservice.domain.entities.Region;
 import com.denkitronik.clienteservice.domain.repositories.IClienteDao;
@@ -140,6 +140,39 @@ class ClienteServiceImplTest {
         assertThatThrownBy(() -> clienteService.save(cliente))
                 .isInstanceOf(ClienteServiceException.class)
                 .hasMessageContaining("duplicados");
+    }
+
+    @Test
+    @DisplayName("update — ID existente → actualiza y retorna cliente modificado")
+    void update_idExistente_debeActualizarYRetornar() {
+        // Arrange
+        Cliente datosNuevos = new Cliente();
+        datosNuevos.setNombre("Linus Updated");
+        datosNuevos.setApellido("Torvalds");
+        datosNuevos.setEmail("linus2@kernel.org");
+        datosNuevos.setRegion(region);
+
+        when(clienteDao.findById(1L)).thenReturn(Optional.of(cliente));
+        when(clienteDao.save(any(Cliente.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        // Act
+        Cliente resultado = clienteService.update(1L, datosNuevos);
+
+        // Assert
+        assertThat(resultado.getNombre()).isEqualTo("Linus Updated");
+        assertThat(resultado.getEmail()).isEqualTo("linus2@kernel.org");
+        verify(clienteDao, times(1)).findById(1L);
+        verify(clienteDao, times(1)).save(any(Cliente.class));
+    }
+
+    @Test
+    @DisplayName("update — ID inexistente → lanza ClienteNotFoundException")
+    void update_idInexistente_debeLanzarExcepcion() {
+        when(clienteDao.findById(999L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> clienteService.update(999L, cliente))
+                .isInstanceOf(ClienteNotFoundException.class)
+                .hasMessageContaining("999");
     }
 
     @Test
