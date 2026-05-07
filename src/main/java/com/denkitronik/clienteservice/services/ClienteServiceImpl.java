@@ -31,9 +31,14 @@ public class ClienteServiceImpl implements IClienteService {
     }
 
     @Override
-    public Cliente update(Cliente cliente) {
-        // save() de JPA hace INSERT si no tiene ID, UPDATE si lo tiene
-        return clienteDao.save(cliente);
+    public Cliente update(Long id, Cliente cliente) {
+        Cliente clienteActual = clienteDao.findById(id).orElseThrow();
+        clienteActual.setNombre(cliente.getNombre());
+        clienteActual.setApellido(cliente.getApellido());
+        clienteActual.setEmail(cliente.getEmail());
+        clienteActual.setFoto(cliente.getFoto());
+        clienteActual.setRegion(cliente.getRegion());
+        return clienteDao.save(clienteActual);
     }
 
     @Override

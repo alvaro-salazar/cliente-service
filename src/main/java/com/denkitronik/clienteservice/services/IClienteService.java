@@ -14,7 +14,7 @@ public interface IClienteService {
 
     Cliente save(Cliente cliente);
 
-    Cliente update(Cliente cliente);
+    Cliente update(Long id, Cliente cliente);
 
     void delete(Cliente cliente);
 
