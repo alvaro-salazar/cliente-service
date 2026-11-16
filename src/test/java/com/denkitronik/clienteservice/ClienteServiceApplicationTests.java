@@ -2,7 +2,7 @@ package com.denkitronik.clienteservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -19,7 +19,7 @@ class ClienteServiceApplicationTests {
             new PostgreSQLContainer<>("postgres:16-alpine");
 
     // Evita que Spring Boot intente contactar a Keycloak al levantar el contexto
-    @MockBean
+    @MockitoBean
     JwtDecoder jwtDecoder;
 
     @Test

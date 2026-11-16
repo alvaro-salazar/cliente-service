@@ -5,9 +5,11 @@ import com.denkitronik.clienteservice.domain.entities.Region;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.boot.resttestclient.TestRestTemplate;
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.http.MediaType;
 import org.springframework.http.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -25,6 +27,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureTestRestTemplate
 @Testcontainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DisplayName("E2E tests — flujo completo HTTP → PostgreSQL con Testcontainers")
@@ -43,7 +46,7 @@ class ClienteIntegrationTest {
     private JdbcTemplate jdbcTemplate;
 
     // JwtDecoder mockeado para que el contexto no contacte a Keycloak
-    @MockBean
+    @MockitoBean
     private JwtDecoder jwtDecoder;
 
     private static final String BASE    = "/api/v1/cliente-service";
