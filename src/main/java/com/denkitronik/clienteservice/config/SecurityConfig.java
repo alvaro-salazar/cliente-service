@@ -1,12 +1,18 @@
 package com.denkitronik.clienteservice.config;
 
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 /**
  * Configura Spring Security como Resource Server OAuth2.
@@ -29,6 +35,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+            // Habilita el filtro CORS de Spring Security, que toma su
+            // configuración del bean corsConfigurationSource de más abajo.
+            // Va antes de la autenticación: el preflight OPTIONS no trae token.
+            .cors(Customizer.withDefaults())
             .authorizeHttpRequests(auth -> auth
                 // Actuator y Swagger UI expuestos sin autenticación
                 .requestMatchers("/actuator/**",
@@ -51,5 +61,28 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable());
 
         return http.build();
+    }
+
+    /**
+     * Permite que el navegador llame a esta API desde otro origen.
+     *
+     * <p>El front de Angular se sirve en http://localhost:4200 y la API en
+     * http://localhost:8080: para el navegador son dos orígenes distintos.
+     * Antes de cada petición con cabeceras propias —como Authorization—
+     * el navegador manda un OPTIONS de comprobación (preflight). Si la
+     * respuesta no lleva los encabezados CORS, el navegador descarta la
+     * petición real y la aplicación no ve ningún dato.
+     */
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("http://localhost:4200"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        config.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 }
